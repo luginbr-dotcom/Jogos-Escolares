@@ -219,7 +219,7 @@ function renderEscadinha() {
 }
 
 function renderDado() {
-  let pos = [0,0], jogador = 0, terminou = false;
+  let pos = [1,1], jogador = 0, terminou = false, animando = false;
   const total = 48;
 
   const especiais = {
@@ -235,7 +235,8 @@ function renderDado() {
     34: {tipo:"volta", emoji:"🌀", texto:"Redemoinho! Volte 3 casas.", efeito:-3},
     38: {tipo:"presente", emoji:"🎉", texto:"Presente! Avance 2 casas.", efeito:2},
     42: {tipo:"cuidado", emoji:"⚠️", texto:"Cuidado! Volte 2 casas.", efeito:-2},
-    45: {tipo:"coracao", emoji:"❤️", texto:"Boa atitude! Jogue novamente.", efeito:"extra"}
+    45: {tipo:"coracao", emoji:"❤️", texto:"Boa atitude! Jogue novamente.", efeito:"extra"},
+    47: {tipo:"retorno", emoji:"🌀", texto:"PORTAL DO RETORNO! Ao cair aqui, você volta direto para a casa 1. Tente novamente!", efeito:"inicio"}
   };
 
   const casas = Array.from({length: total}, (_,i) => i + 1);
@@ -257,13 +258,12 @@ function renderDado() {
 
   painelJogo(
     "Dado com Casas para Avançar",
-    "Um grande tabuleiro de jornada: role o dado, avance pelo caminho, encontre eventos e tente chegar primeiro à casa final!",
+    "Role o dado, acompanhe o peão pulando casa por casa e veja claramente cada evento acontecer no tabuleiro.",
     `
       <div class="score-line">
         <strong id="turnoDado">🎲 Vez do Jogador 1</strong>
         <span>🏁 Meta: casa ${total}</span>
       </div>
-
       <div class="tabuleiro-vida-wrap">
         <div class="tabuleiro-vida tabuleiro-vida-grande" id="tabuleiroDado" aria-label="Grande tabuleiro de percurso com 48 casas">
           ${casaHTML}
@@ -275,75 +275,125 @@ function renderDado() {
           </div>
         </div>
       </div>
-
       <div class="pecas-legenda">
         <span>🔵 Jogador 1: <b id="pos1">1</b></span>
         <span>🟠 Jogador 2: <b id="pos2">1</b></span>
       </div>
-
       <div class="dado-area">
         <div class="dado-visual" id="dadoVisual">🎲</div>
         <button class="btn-principal" id="btnDado">Rolar dado 🎲</button>
       </div>
-      <p id="feedbackDado" class="feedback" aria-live="polite">🚩 Jogador 1 começa na saída.</p>
+      <div id="eventoDado" class="evento-dado" aria-live="polite">🚩 Jogador 1 começa na saída.</div>
+      <p id="feedbackDado" class="feedback" aria-live="polite">Role o dado para começar a jornada!</p>
       <div class="legenda-casas">
-        <span>🎁 Bônus</span><span>⭐ Jogue novamente</span><span>🧠 Desafio</span>
-        <span>🌉 Atalho</span><span>↩️ Volte</span><span>🏁 Chegada</span>
+        <span>🎁 Bônus</span><span>⭐ Novamente</span><span>🧠 Desafio</span>
+        <span>🌉 Atalho</span><span>↩️ Volte</span><span>🌀 Retorno à saída</span><span>🏁 Chegada</span>
       </div>`
   );
 
   const atualizar = () => {
     document.querySelectorAll("#tabuleiroDado .casa").forEach(c => {
-      c.classList.remove("p1","p2","p12");
+      c.classList.remove("p1","p2","p12","casa-ativa","casa-evento-destaque");
       const n = Number(c.dataset.casa);
       if (pos[0] === n && pos[1] === n) c.classList.add("p12");
       else if (pos[0] === n) c.classList.add("p1");
       else if (pos[1] === n) c.classList.add("p2");
     });
-    document.getElementById("pos1").textContent = Math.max(1,pos[0]);
-    document.getElementById("pos2").textContent = Math.max(1,pos[1]);
+    document.getElementById("pos1").textContent = pos[0];
+    document.getElementById("pos2").textContent = pos[1];
+    const atual = document.querySelector(`#tabuleiroDado .casa[data-casa="${pos[jogador]}"]`);
+    if (atual) atual.classList.add("casa-ativa");
   };
 
-  document.getElementById("btnDado").onclick = () => {
-    if (terminou) return;
+  const esperar = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  const moverPassoAPasso = async (de, ate) => {
+    const passo = ate >= de ? 1 : -1;
+    let atual = de;
+    while (atual !== ate) {
+      atual += passo;
+      pos[jogador] = atual;
+      atualizar();
+      const casa = document.querySelector(`#tabuleiroDado .casa[data-casa="${atual}"]`);
+      if (casa) {
+        casa.classList.add("casa-ativa");
+        await esperar(260);
+      }
+    }
+  };
+
+  document.getElementById("btnDado").onclick = async () => {
+    if (terminou || animando) return;
+    animando = true;
+    const botao = document.getElementById("btnDado");
+    botao.disabled = true;
 
     const valor = Math.floor(Math.random()*6)+1;
     document.getElementById("dadoVisual").textContent = ["⚀","⚁","⚂","⚃","⚄","⚅"][valor-1];
 
-    let novaPos = Math.min(total, Math.max(1,pos[jogador]) + valor);
-    let mensagem = `Jogador ${jogador+1} tirou ${valor} e chegou à casa ${novaPos}.`;
-    let jogarNovamente = false;
+    const origem = pos[jogador];
+    const destinoDado = Math.min(total, origem + valor);
+    const fb = document.getElementById("feedbackDado");
+    const evento = document.getElementById("eventoDado");
 
-    if (especiais[novaPos]) {
-      const e = especiais[novaPos];
-      mensagem += " " + e.emoji + " " + e.texto;
+    fb.className = "feedback";
+    fb.textContent = `🎲 Jogador ${jogador+1} tirou ${valor}! Observe o peão avançando...`;
+    evento.textContent = `➡️ Saindo da casa ${origem} e avançando ${valor} casa(s).`;
+
+    await esperar(450);
+    await moverPassoAPasso(origem, destinoDado);
+
+    let novaPos = destinoDado;
+    let jogarNovamente = false;
+    const e = especiais[novaPos];
+
+    if (e) {
+      document.querySelector(`#tabuleiroDado .casa[data-casa="${novaPos}"]`)?.classList.add("casa-evento-destaque");
+      evento.textContent = `${e.emoji} ${e.texto}`;
+      fb.textContent = `📍 Jogador ${jogador+1} caiu na casa ${novaPos}. ${e.emoji} ${e.texto}`;
+      await esperar(900);
 
       if (typeof e.efeito === "number") {
-        novaPos = Math.max(1, Math.min(total, novaPos + e.efeito));
-        mensagem += ` Agora está na casa ${novaPos}.`;
+        const alvo = Math.max(1, Math.min(total, novaPos + e.efeito));
+        fb.textContent = `${e.emoji} Efeito ativado! O peão vai para a casa ${alvo}.`;
+        await esperar(350);
+        await moverPassoAPasso(novaPos, alvo);
+        novaPos = alvo;
       }
 
-      if (e.efeito === "extra") jogarNovamente = true;
+      if (e.efeito === "extra") {
+        jogarNovamente = true;
+        evento.textContent = `${e.emoji} Você ganhou uma jogada extra!`;
+      }
 
       if (e.efeito === "pergunta") {
-        mensagem += " O professor pode fazer uma pergunta relacionada à aula.";
+        evento.textContent = `🧠 Desafio! O professor pode fazer uma pergunta relacionada à aula.`;
+        fb.textContent += " O professor pode fazer uma pergunta relacionada à aula.";
+      }
+
+      if (e.efeito === "inicio") {
+        evento.textContent = "🌀 PORTAL DO RETORNO! Voltando para a casa 1...";
+        fb.className = "feedback errado";
+        fb.textContent = `🌀 Jogador ${jogador+1} caiu na casa 47 e voltou para o INÍCIO!`;
+        await esperar(700);
+        await moverPassoAPasso(novaPos, 1);
+        novaPos = 1;
+        atualizar();
       }
     }
 
     pos[jogador] = novaPos;
     atualizar();
 
-    const fb = document.getElementById("feedbackDado");
     if (pos[jogador] >= total) {
       terminou = true;
       fb.className = "feedback certo";
       fb.textContent = `🏆🎉 Jogador ${jogador+1} chegou à casa ${total} e venceu a Grande Jornada!`;
-      document.getElementById("btnDado").textContent = "🏆 Jogo encerrado";
+      evento.textContent = "🏁 CHEGADA! A Grande Jornada terminou!";
+      botao.textContent = "🏆 Jogo encerrado";
+      animando = false;
       return;
     }
-
-    fb.className = "feedback";
-    fb.textContent = mensagem;
 
     if (jogarNovamente) {
       document.getElementById("turnoDado").textContent = `⭐ Jogador ${jogador+1} joga novamente!`;
@@ -351,10 +401,14 @@ function renderDado() {
       jogador = jogador === 0 ? 1 : 0;
       document.getElementById("turnoDado").textContent = `🎲 Vez do Jogador ${jogador+1}`;
     }
+
+    botao.disabled = false;
+    animando = false;
   };
 
   atualizar();
 }
+
 function renderPalavraCruzada() {
   const palavras = [
     {nome:"AULA", dica:"Momento em que professor e alunos aprendem juntos.", cells:[[0,4],[1,4],[2,4],[3,4]]},
