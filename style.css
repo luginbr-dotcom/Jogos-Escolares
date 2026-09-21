@@ -137,3 +137,40 @@ h1,h2,h3,p{margin-top:0}h1,h2,h3{line-height:1.15}
   .tabuleiro-vida-grande .casa small{font-size:1.1rem}
   .centro-tabuleiro{top:91px;bottom:91px}
 }
+
+
+/* Feedback visual do tabuleiro e animação dos movimentos */
+.evento-dado{
+  margin:16px auto 10px;
+  max-width:900px;
+  padding:14px 18px;
+  border:2px solid #d7dee8;
+  border-radius:14px;
+  background:linear-gradient(135deg,#fff,#f4f7fb);
+  font-weight:800;
+  font-size:1.05rem;
+  text-align:center;
+  min-height:24px;
+}
+.casa.casa-ativa{
+  transform:scale(1.12);
+  box-shadow:0 0 0 4px rgba(255,255,255,.95),0 8px 24px rgba(0,0,0,.22);
+  z-index:8;
+}
+.casa.casa-evento-destaque{
+  transform:scale(1.18);
+  box-shadow:0 0 0 5px rgba(255,193,7,.8),0 10px 28px rgba(0,0,0,.25);
+  z-index:9;
+  animation:destacarEvento .7s ease-in-out infinite alternate;
+}
+.casa.retorno{
+  border:3px dashed #8e44ad;
+  background:linear-gradient(135deg,#f3e5f5,#fff);
+}
+@keyframes destacarEvento{
+  from{filter:brightness(1);transform:scale(1.12)}
+  to{filter:brightness(1.22);transform:scale(1.2)}
+}
+@media (prefers-reduced-motion: reduce){
+  .casa.casa-evento-destaque{animation:none}
+}
