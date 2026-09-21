@@ -220,55 +220,58 @@ function renderEscadinha() {
 
 function renderDado() {
   let pos = [0,0], jogador = 0, terminou = false;
-  const total = 32;
+  const total = 48;
 
-  // Tabuleiro em formato de circuito, inspirado na lógica visual de jogos de percurso
-  // como o Jogo da Vida: caminho contínuo ao redor de um centro, com casas especiais.
   const especiais = {
-    5: {tipo:"bonus", texto:"🎁 Bônus! Avance 2 casas."},
-    9: {tipo:"pergunta", texto:"🧠 Desafio: responda uma pergunta do professor."},
-    13: {tipo:"bonus", texto:"🚀 Atalho! Avance 3 casas."},
-    17: {tipo:"volta", texto:"↩️ Imprevisto! Volte 2 casas."},
-    21: {tipo:"pergunta", texto:"📚 Desafio: explique um conceito estudado."},
-    25: {tipo:"bonus", texto:"⭐ Boa jogada! Avance 2 casas."},
-    29: {tipo:"volta", texto:"🛑 Pare um turno."}
+    4:  {tipo:"bonus", emoji:"🎁", texto:"Bônus! Avance 2 casas.", efeito:2},
+    7:  {tipo:"estrela", emoji:"⭐", texto:"Estrela da sorte! Jogue novamente.", efeito:"extra"},
+    10: {tipo:"pergunta", emoji:"🧠", texto:"Desafio! Responda uma pergunta do professor.", efeito:"pergunta"},
+    13: {tipo:"ponte", emoji:"🌉", texto:"Ponte! Atalho para frente.", efeito:4},
+    16: {tipo:"energia", emoji:"⚡", texto:"Energia! Avance 3 casas.", efeito:3},
+    19: {tipo:"volta", emoji:"🌧️", texto:"Imprevisto! Volte 2 casas.", efeito:-2},
+    22: {tipo:"trofeu", emoji:"🏆", texto:"Conquista! Avance 3 casas.", efeito:3},
+    26: {tipo:"pergunta", emoji:"📚", texto:"Desafio escolar! Responda antes de continuar.", efeito:"pergunta"},
+    30: {tipo:"ponte", emoji:"🚀", texto:"Foguete! Salte 4 casas.", efeito:4},
+    34: {tipo:"volta", emoji:"🌀", texto:"Redemoinho! Volte 3 casas.", efeito:-3},
+    38: {tipo:"presente", emoji:"🎉", texto:"Presente! Avance 2 casas.", efeito:2},
+    42: {tipo:"cuidado", emoji:"⚠️", texto:"Cuidado! Volte 2 casas.", efeito:-2},
+    45: {tipo:"coracao", emoji:"❤️", texto:"Boa atitude! Jogue novamente.", efeito:"extra"}
   };
 
-  // Ordem em zigue-zague para criar um percurso visual parecido com um tabuleiro
-  // de jogo de percurso, em vez de uma simples lista.
   const casas = Array.from({length: total}, (_,i) => i + 1);
-  const linha = n => Math.floor((n - 1) / 8);
+  const linha = n => Math.floor((n - 1) / 12);
   const coluna = n => {
-    const c = (n - 1) % 8;
-    return linha(n) % 2 === 0 ? c : 7 - c;
+    const c = (n - 1) % 12;
+    return linha(n) % 2 === 0 ? c : 11 - c;
   };
 
   const casaHTML = casas.map(n => {
     const especial = especiais[n];
     const classe = especial ? " casa-especial " + especial.tipo : "";
-    const rotulo = n === total ? "🏁 CHEGADA" : n;
+    const rotulo = n === 1 ? "🚩 SAÍDA" : n === total ? "🏁 CHEGADA" : n;
     return `<div class="casa${classe}" data-casa="${n}" style="grid-row:${linha(n)+1};grid-column:${coluna(n)+1}">
       <span class="numero-casa">${rotulo}</span>
-      ${especial ? `<small>${especial.texto.split(" ")[0]}</small>` : ""}
+      ${especial ? `<small title="${especial.texto}">${especial.emoji}</small>` : "<small>•</small>"}
     </div>`;
   }).join("");
 
   painelJogo(
     "Dado com Casas para Avançar",
-    "Um tabuleiro de percurso inspirado nos jogos de vida e jornada: role o dado, avance pelo caminho e enfrente casas especiais.",
+    "Um grande tabuleiro de jornada: role o dado, avance pelo caminho, encontre eventos e tente chegar primeiro à casa final!",
     `
       <div class="score-line">
-        <strong id="turnoDado">Vez do Jogador 1</strong>
+        <strong id="turnoDado">🎲 Vez do Jogador 1</strong>
         <span>🏁 Meta: casa ${total}</span>
       </div>
 
       <div class="tabuleiro-vida-wrap">
-        <div class="tabuleiro-vida" id="tabuleiroDado" aria-label="Tabuleiro de percurso com 32 casas">
+        <div class="tabuleiro-vida tabuleiro-vida-grande" id="tabuleiroDado" aria-label="Grande tabuleiro de percurso com 48 casas">
           ${casaHTML}
           <div class="centro-tabuleiro">
-            <span>🎲</span>
-            <strong>Jornada</strong>
-            <small>Chegue ao final!</small>
+            <span>🎲🏆🗺️</span>
+            <strong>GRANDE JORNADA</strong>
+            <small>Aprenda • avance • supere os eventos!</small>
+            <div class="centro-emojis">📚 🧠 ⭐ 🚀 🎯 🏆</div>
           </div>
         </div>
       </div>
@@ -280,16 +283,17 @@ function renderDado() {
 
       <div class="dado-area">
         <div class="dado-visual" id="dadoVisual">🎲</div>
-        <button class="btn-principal" id="btnDado">Rolar dado</button>
+        <button class="btn-principal" id="btnDado">Rolar dado 🎲</button>
       </div>
-      <p id="feedbackDado" class="feedback" aria-live="polite">Jogador 1 começa na casa 1.</p>
+      <p id="feedbackDado" class="feedback" aria-live="polite">🚩 Jogador 1 começa na saída.</p>
       <div class="legenda-casas">
-        <span>🎁 Avance</span><span>↩️ Volte</span><span>🧠 Desafio</span><span>🏁 Chegada</span>
+        <span>🎁 Bônus</span><span>⭐ Jogue novamente</span><span>🧠 Desafio</span>
+        <span>🌉 Atalho</span><span>↩️ Volte</span><span>🏁 Chegada</span>
       </div>`
   );
 
   const atualizar = () => {
-    document.querySelectorAll(".casa").forEach(c => {
+    document.querySelectorAll("#tabuleiroDado .casa").forEach(c => {
       c.classList.remove("p1","p2","p12");
       const n = Number(c.dataset.casa);
       if (pos[0] === n && pos[1] === n) c.classList.add("p12");
@@ -304,26 +308,25 @@ function renderDado() {
     if (terminou) return;
 
     const valor = Math.floor(Math.random()*6)+1;
-    document.getElementById("dadoVisual").textContent =
-      ["⚀","⚁","⚂","⚃","⚄","⚅"][valor-1];
+    document.getElementById("dadoVisual").textContent = ["⚀","⚁","⚂","⚃","⚄","⚅"][valor-1];
 
     let novaPos = Math.min(total, Math.max(1,pos[jogador]) + valor);
-    let mensagem = `Jogador ${jogador+1} tirou ${valor} e avançou ${valor} casa(s), chegando à casa ${novaPos}.`;
+    let mensagem = `Jogador ${jogador+1} tirou ${valor} e chegou à casa ${novaPos}.`;
+    let jogarNovamente = false;
 
     if (especiais[novaPos]) {
       const e = especiais[novaPos];
-      mensagem += " " + e.texto;
+      mensagem += " " + e.emoji + " " + e.texto;
 
-      if (e.tipo === "bonus") novaPos = Math.min(total, novaPos + (novaPos === 13 ? 3 : 2));
-      if (e.tipo === "volta") {
-        if (novaPos === 29) {
-          mensagem += " O jogador perde a próxima rodada.";
-        } else {
-          novaPos = Math.max(1, novaPos - 2);
-        }
+      if (typeof e.efeito === "number") {
+        novaPos = Math.max(1, Math.min(total, novaPos + e.efeito));
+        mensagem += ` Agora está na casa ${novaPos}.`;
       }
-      if (e.tipo === "pergunta") {
-        mensagem += " O professor pode fazer uma pergunta antes da próxima jogada.";
+
+      if (e.efeito === "extra") jogarNovamente = true;
+
+      if (e.efeito === "pergunta") {
+        mensagem += " O professor pode fazer uma pergunta relacionada à aula.";
       }
     }
 
@@ -334,15 +337,20 @@ function renderDado() {
     if (pos[jogador] >= total) {
       terminou = true;
       fb.className = "feedback certo";
-      fb.textContent = `🏆 Jogador ${jogador+1} chegou à casa ${total} e venceu a jornada!`;
-      document.getElementById("btnDado").textContent = "Jogo encerrado";
+      fb.textContent = `🏆🎉 Jogador ${jogador+1} chegou à casa ${total} e venceu a Grande Jornada!`;
+      document.getElementById("btnDado").textContent = "🏆 Jogo encerrado";
       return;
     }
 
     fb.className = "feedback";
     fb.textContent = mensagem;
-    jogador = jogador === 0 ? 1 : 0;
-    document.getElementById("turnoDado").textContent = `Vez do Jogador ${jogador+1}`;
+
+    if (jogarNovamente) {
+      document.getElementById("turnoDado").textContent = `⭐ Jogador ${jogador+1} joga novamente!`;
+    } else {
+      jogador = jogador === 0 ? 1 : 0;
+      document.getElementById("turnoDado").textContent = `🎲 Vez do Jogador ${jogador+1}`;
+    }
   };
 
   atualizar();
