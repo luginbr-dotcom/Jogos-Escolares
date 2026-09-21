@@ -84,3 +84,56 @@ h1,h2,h3,p{margin-top:0}h1,h2,h3{line-height:1.15}
   .tabuleiro-vida{grid-template-rows:repeat(4,70px);min-width:500px}
   .centro-tabuleiro{top:70px;bottom:70px}
 }
+
+
+/* Grande tabuleiro de jornada */
+.tabuleiro-vida-grande{
+  grid-template-columns:repeat(12,minmax(62px,1fr));
+  grid-template-rows:repeat(4,96px);
+  min-width:900px;
+  min-height:430px;
+  gap:9px;
+  padding:14px;
+  border-width:5px;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(255,255,255,.9),transparent 28%),
+    linear-gradient(135deg,#fff3c4,#eaf3ff 48%,#e8f8ee);
+}
+.tabuleiro-vida-grande .casa{
+  border-width:3px;
+  border-radius:17px;
+  font-size:1rem;
+  box-shadow:0 4px 0 rgba(0,0,0,.08);
+  overflow:hidden;
+}
+.tabuleiro-vida-grande .casa small{font-size:1.35rem;line-height:1}
+.tabuleiro-vida-grande .casa-especial{background:#fff8d9;border-color:#e0ad39}
+.tabuleiro-vida-grande .casa-especial.estrela,.tabuleiro-vida-grande .casa-especial.coracao{background:#fff0fa;border-color:#d66ab5}
+.tabuleiro-vida-grande .casa-especial.ponte,.tabuleiro-vida-grande .casa-especial.energia{background:#e9f7ff;border-color:#51a8df}
+.tabuleiro-vida-grande .casa-especial.trofeu,.tabuleiro-vida-grande .casa-especial.presente{background:#eaf9ee;border-color:#55ad72}
+.tabuleiro-vida-grande .casa-especial.volta,.tabuleiro-vida-grande .casa-especial.cuidado{background:#fff0f0;border-color:#db6666}
+.tabuleiro-vida-grande .casa-especial.pergunta{background:#f1eaff;border-color:#8965d4}
+.tabuleiro-vida-grande .casa:hover{transform:translateY(-4px) scale(1.02);z-index:5}
+.tabuleiro-vida-grande .casa.p1::after{content:"🔵";font-size:1.15rem}
+.tabuleiro-vida-grande .casa.p2::after{content:"🟠";font-size:1.15rem}
+.tabuleiro-vida-grande .casa.p12::after{content:"🔵🟠";font-size:1rem}
+.tabuleiro-vida-grande .numero-casa{font-size:.92rem}
+.tabuleiro-vida-grande .casa[data-casa="1"]{background:#e6f7ed;border-color:#3ca968}
+.tabuleiro-vida-grande .casa[data-casa="48"]{background:#fff0c7;border-color:#e3a51b;box-shadow:0 0 0 3px #fff,0 0 0 7px #e3a51b,0 6px 0 rgba(0,0,0,.08)}
+.centro-tabuleiro{
+  left:calc(16.666% + 5px);
+  right:calc(16.666% + 5px);
+  top:105px;
+  bottom:105px;
+  background:linear-gradient(145deg,#ffffff,#f8fbff);
+  border-width:4px;
+}
+.centro-tabuleiro span{font-size:2.5rem}
+.centro-tabuleiro strong{font-size:1.4rem}
+.centro-emojis{font-size:1.25rem;letter-spacing:4px;margin-top:5px}
+@media(max-width:650px){
+  .tabuleiro-vida-grande{grid-template-rows:repeat(4,82px);min-width:820px;min-height:380px}
+  .tabuleiro-vida-grande .casa{font-size:.85rem}
+  .tabuleiro-vida-grande .casa small{font-size:1.1rem}
+  .centro-tabuleiro{top:91px;bottom:91px}
+}
