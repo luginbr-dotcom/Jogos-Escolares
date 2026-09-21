@@ -113,11 +113,35 @@ function jogarNoSite(id) {
 }
 
 function painelModo(game) {
-  gameContent.innerHTML = 'BT<section class="play-screen">
-    <div class="play-top"><button class="btn-secundario" type="button" onclick="voltarRegras()">← Voltar às regras</button><span class="play-badge">🎮 Escolha o nível</span></div>
-    <div class="play-title"><div class="game-header-emoji">§{game.emoji}</div><div><p class="etiqueta">§{game.categoria.toUpperCase()}</p><h1>§{game.nome}</h1><p>Escolha uma versão adequada à turma.</p></div></div>
-    <div class="modo-grid"><button class="modo-card" onclick="iniciarModo('§{game.id}','basico')"><span class="modo-icone">🟢</span><strong>Modo básico</strong><small>Ideal para uma primeira rodada.</small><b>Jogar →</b></button>
-    <button class="modo-card modo-avancado" onclick="iniciarModo('§{game.id}','avancado')"><span class="modo-icone">🔥</span><strong>Modo avançado</strong><small>8º ano ao 3º ano do Ensino Médio.</small><b>Jogar →</b></button></div></section>BT';
+  gameContent.innerHTML = `
+    <section class="play-screen">
+      <div class="play-top">
+        <button class="btn-secundario" type="button" onclick="voltarRegras()">← Voltar às regras</button>
+        <span class="play-badge">🎮 Escolha o nível</span>
+      </div>
+      <div class="play-title">
+        <div class="game-header-emoji">${game.emoji}</div>
+        <div>
+          <p class="etiqueta">${game.categoria.toUpperCase()}</p>
+          <h1>${game.nome}</h1>
+          <p>Escolha uma versão adequada à turma.</p>
+        </div>
+      </div>
+      <div class="modo-grid">
+        <button class="modo-card" type="button" onclick="iniciarModo('${game.id}','basico')">
+          <span class="modo-icone">🟢</span>
+          <strong>Modo básico</strong>
+          <small>Ideal para uma primeira rodada.</small>
+          <b>Jogar →</b>
+        </button>
+        <button class="modo-card modo-avancado" type="button" onclick="iniciarModo('${game.id}','avancado')">
+          <span class="modo-icone">🔥</span>
+          <strong>Modo avançado</strong>
+          <small>8º ano ao 3º ano do Ensino Médio.</small>
+          <b>Jogar →</b>
+        </button>
+      </div>
+    </section>`;
 }
 function iniciarModo(id, modo) {
   if (id === "escadinha") modo === "avancado" ? renderEscadinhaAvancada() : renderEscadinha();
