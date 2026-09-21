@@ -178,3 +178,108 @@ h1,h2,h3,p{margin-top:0}h1,h2,h3{line-height:1.15}
 
 /* Remove a camada decorativa atrás do tabuleiro */
 .centro-tabuleiro{display:none!important}
+
+
+/* Palavra cruzada ampliada — visual de tabuleiro real */
+.cross-layout-grande{
+  display:grid;
+  grid-template-columns:auto minmax(240px,1fr);
+  gap:28px;
+  align-items:start;
+}
+.cross-board-wrap{
+  width:100%;
+  overflow:auto;
+  padding:12px;
+  border:1px solid #e1e1e1;
+  border-radius:18px;
+  background:#f7f7f7;
+}
+.cross-grid-grande{
+  display:grid;
+  grid-template-columns:repeat(13,48px);
+  grid-template-rows:repeat(12,48px);
+  gap:2px;
+  width:max-content;
+  margin:auto;
+  background:#222;
+  border:3px solid #222;
+}
+.cross-grid-grande .cross-cell{
+  position:relative;
+  width:48px;
+  height:48px;
+  min-height:48px;
+  border:1px solid #555;
+  border-radius:0;
+  background:#fff;
+}
+.cross-grid-grande .cross-cell.blocked{
+  background:#202124;
+  border-color:#202124;
+}
+.cross-grid-grande .cross-cell input{
+  width:100%;
+  height:100%;
+  padding:5px 3px 2px;
+  border:0;
+  outline:0;
+  background:transparent;
+  text-align:center;
+  text-transform:uppercase;
+  font-size:1.55rem;
+  font-weight:900;
+  color:#202124;
+}
+.cross-grid-grande .cross-cell input:focus{
+  background:#eaf2ff;
+  box-shadow:inset 0 0 0 3px var(--azul);
+}
+.cross-grid-grande .cross-cell input.ok{
+  background:var(--verde-claro);
+  color:var(--verde);
+}
+.cross-grid-grande .cross-cell input.bad{
+  background:var(--vermelho-claro);
+  color:var(--vermelho);
+}
+.cross-number{
+  position:absolute;
+  top:2px;
+  left:3px;
+  z-index:2;
+  font-size:.68rem;
+  line-height:1;
+  font-weight:900;
+  color:#333;
+  pointer-events:none;
+}
+.cross-help{
+  margin:18px 0 0!important;
+  padding-top:14px;
+  border-top:1px solid #ddd;
+  color:var(--secundario);
+  font-size:.9rem;
+}
+@media(max-width:900px){
+  .cross-layout-grande{
+    grid-template-columns:1fr;
+  }
+  .cross-board-wrap{
+    width:100%;
+  }
+}
+@media(max-width:560px){
+  .cross-grid-grande{
+    grid-template-columns:repeat(13,40px);
+    grid-template-rows:repeat(12,40px);
+  }
+  .cross-grid-grande .cross-cell{
+    width:40px;
+    height:40px;
+    min-height:40px;
+  }
+  .cross-grid-grande .cross-cell input{
+    font-size:1.25rem;
+  }
+}
