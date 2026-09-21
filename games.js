@@ -54,7 +54,7 @@ const games = [
     tempo: 30,
     tamanhoDaTurma: "6 a 30 alunos",
     organizacaoDaTurma: "Grupos",
-    descricao: "Os alunos percorrem uma trilha usando um dado para descobrir quantas casas podem avançar.",
+    descricao: "Os jogadores percorrem um tabuleiro em circuito, inspirado na organização visual de jogos de percurso como o Jogo da Vida, usando um dado para avançar e casas especiais para mudar a jornada.",
     materiais: ["1 dado por grupo", "Folhas de papel", "Lápis", "Tampinhas ou pequenos objetos"],
     objetivo: "Praticar contagem, comparação de quantidades, atenção e tomada de decisões.",
     papelDoProfessor: [
@@ -65,7 +65,7 @@ const games = [
       "Se houver discussão sobre uma jogada, peça que os alunos contem as casas novamente."
     ],
     comoJogar: [
-      "Desenhe uma trilha com aproximadamente 20 casas.",
+      "Monte um tabuleiro em circuito com casas numeradas, curvas e um espaço central, formando um percurso contínuo.",
       "Cada jogador escolhe uma tampinha para representar sua peça.",
       "Todos colocam suas peças na primeira casa.",
       "O primeiro jogador joga o dado.",
@@ -75,10 +75,10 @@ const games = [
     ],
     variacoes: [
       "Coloque perguntas matemáticas em algumas casas.",
-      "Crie casas especiais que façam o jogador avançar ou voltar.",
+      "Use casas especiais de bônus, retorno e desafio, distribuídas pelo percurso.",
       "Peça que o aluno diga em qual número vai parar antes de mover a peça.",
       "Para turmas grandes, monte várias trilhas.",
-      "Em pouco espaço, faça a trilha em uma folha sobre cada mesa."
+      "Em pouco espaço, use a versão digital do tabuleiro no site ou faça uma versão menor sobre cada mesa."
     ],
     fechamento: [
       "Como vocês descobriram quantas casas deveriam avançar?",
