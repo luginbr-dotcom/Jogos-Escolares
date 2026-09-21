@@ -406,41 +406,91 @@ function renderDado() {
 
 function renderPalavraCruzada() {
   const palavras = [
-    {nome:"AULA", dica:"Momento em que professor e alunos aprendem juntos.", cells:[[0,4],[1,4],[2,4],[3,4]]},
-    {nome:"ESCOLA", dica:"Lugar onde estudamos.", cells:[[2,0],[2,1],[2,2],[2,3],[2,4],[2,5]]},
-    {nome:"ALUNO", dica:"Pessoa que participa das aulas.", cells:[[2,5],[3,5],[4,5],[5,5],[6,5]]},
-    {nome:"LIVRO", dica:"Pode ser usado para ler e estudar.", cells:[[6,2],[6,3],[6,4],[6,5],[6,6]]}
+    {nome:"ESCOLA", dica:"Lugar onde estudamos.", numero:1, cells:[[5,2],[5,3],[5,4],[5,5],[5,6],[5,7]]},
+    {nome:"AULA", dica:"Momento em que professor e alunos aprendem juntos.", numero:2, cells:[[2,7],[3,7],[4,7],[5,7]]},
+    {nome:"ALUNO", dica:"Pessoa que participa das aulas.", numero:3, cells:[[5,7],[6,7],[7,7],[8,7],[9,7]]},
+    {nome:"LIVRO", dica:"Pode ser usado para ler e estudar.", numero:4, cells:[[6,7],[6,8],[6,9],[6,10],[6,11]]}
   ];
+
   const solucao = {};
-  palavras.forEach(p => p.cells.forEach((c,i) => solucao[c.join("-")] = p.nome[i]));
+  const inicioNumero = {};
+  palavras.forEach(p => {
+    p.cells.forEach((c,i) => solucao[c.join("-")] = p.nome[i]);
+    inicioNumero[p.cells[0].join("-")] = p.numero;
+  });
 
-  const grade = Array.from({length:7},()=>Array(7).fill(null));
-  Object.entries(solucao).forEach(([key,letter]) => { const [r,c]=key.split("-").map(Number); grade[r][c]=letter; });
+  const linhas = 12;
+  const colunas = 13;
+  const grade = Array.from({length:linhas},()=>Array(colunas).fill(null));
+  Object.entries(solucao).forEach(([key,letter]) => {
+    const [r,c] = key.split("-").map(Number);
+    grade[r][c] = letter;
+  });
 
-  const celulas = grade.flatMap((row,r)=>row.map((letter,c)=>letter === null
-    ? '<div class="cross-cell blocked" aria-hidden="true"></div>'
-    : `<div class="cross-cell"><input maxlength="1" data-cell="${r}-${c}" aria-label="Letra na linha ${r+1}, coluna ${c+1}"></div>`).join(""));
-  painelJogo("Palavra Cruzada", "Leia as pistas e preencha as letras. As palavras se cruzam e algumas casas pertencem a mais de uma palavra.", `
-    <div class="cross-layout">
-      <div class="cross-grid">${celulas}</div>
-      <div class="cross-clues"><h2>📝 Pistas</h2>${palavras.map((p,i)=>`<div class="clue"><strong>${i+1}. ${p.nome.length} letras</strong><p>${p.dica}</p></div>`).join("")}</div>
-    </div>
-    <button class="btn-principal" id="btnCorrigirCruzada">Corrigir palavra cruzada</button>
-    <p id="feedbackCruzada" class="feedback" aria-live="polite"></p>`);
-  document.querySelectorAll(".cross-cell input").forEach(input => input.addEventListener("input", e => e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÁÉÍÓÚÃÕÂÊÔÇ]/g,"").slice(0,1)));
-  document.getElementById("btnCorrigirCruzada").onclick = () => {
-    let acertos=0, total=Object.keys(solucao).length;
-    Object.entries(solucao).forEach(([key,letter]) => {
-      const input=document.querySelector(`[data-cell="${key}"]`);
-      if(input && input.value.toUpperCase()===letter) { acertos++; input.classList.add("ok"); input.classList.remove("bad"); }
-      else if(input) { input.classList.add("bad"); input.classList.remove("ok"); }
+  const celulas = grade.flatMap((row,r) => row.map((letter,c) => {
+    if (letter === null) return '<div class="cross-cell blocked" aria-hidden="true"></div>';
+    const numero = inicioNumero[`${r}-${c}`];
+    return `<div class="cross-cell">
+      ${numero ? `<span class="cross-number">${numero}</span>` : ""}
+      <input maxlength="1" data-cell="${r}-${c}" aria-label="Letra na linha ${r+1}, coluna ${c+1}">
+    </div>`;
+  }).join(""));
+
+  painelJogo(
+    "Palavra Cruzada",
+    "Preencha o diagrama como uma palavra cruzada de verdade: cada número indica onde uma palavra começa e as respostas se cruzam pelas letras.",
+    `
+      <div class="cross-layout cross-layout-grande">
+        <div class="cross-board-wrap">
+          <div class="cross-grid cross-grid-grande" aria-label="Grade da palavra cruzada">
+            ${celulas}
+          </div>
+        </div>
+        <div class="cross-clues">
+          <h2>📝 Pistas</h2>
+          ${palavras.map(p => `<div class="clue"><strong>${p.numero}. ${p.nome.length} letras</strong><p>${p.dica}</p></div>`).join("")}
+          <p class="cross-help">💡 Dica: clique em uma casa e digite uma letra.</p>
+        </div>
+      </div>
+      <button class="btn-principal" id="btnCorrigirCruzada">Corrigir palavra cruzada</button>
+      <p id="feedbackCruzada" class="feedback" aria-live="polite"></p>`
+  );
+
+  document.querySelectorAll(".cross-cell input").forEach(input => {
+    input.addEventListener("input", e => {
+      e.target.value = e.target.value.toUpperCase().replace(/[^A-ZÁÉÍÓÚÃÕÂÊÔÇ]/g,"").slice(0,1);
+      if (e.target.value) {
+        const inputs = [...document.querySelectorAll(".cross-cell input")];
+        const index = inputs.indexOf(e.target);
+        if (index >= 0 && inputs[index + 1]) inputs[index + 1].focus();
+      }
     });
-    const fb=document.getElementById("feedbackCruzada");
-    if(acertos===total) { fb.className="feedback certo"; fb.textContent="🎉 Parabéns! Você completou toda a palavra cruzada."; }
-    else { fb.className="feedback errado"; fb.textContent=`Você acertou ${acertos} de ${total} letras. Tente novamente!`; }
+  });
+
+  document.getElementById("btnCorrigirCruzada").onclick = () => {
+    let acertos = 0, total = Object.keys(solucao).length;
+    Object.entries(solucao).forEach(([key,letter]) => {
+      const input = document.querySelector(`[data-cell="${key}"]`);
+      if (input && input.value.toUpperCase() === letter) {
+        acertos++;
+        input.classList.add("ok");
+        input.classList.remove("bad");
+      } else if (input) {
+        input.classList.add("bad");
+        input.classList.remove("ok");
+      }
+    });
+
+    const fb = document.getElementById("feedbackCruzada");
+    if (acertos === total) {
+      fb.className = "feedback certo";
+      fb.textContent = "🎉 Parabéns! Você completou toda a palavra cruzada.";
+    } else {
+      fb.className = "feedback errado";
+      fb.textContent = `Você acertou ${acertos} de ${total} letras. Confira as casas marcadas e tente novamente!`;
+    }
   };
 }
-
 function renderCaraACara() {
   const cartas = [
     {nome:"Gato", emoji:"🐱", grupo:"animal", dica:"Tem quatro patas e costuma miar."},
