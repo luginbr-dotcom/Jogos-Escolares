@@ -174,3 +174,7 @@ h1,h2,h3,p{margin-top:0}h1,h2,h3{line-height:1.15}
 @media (prefers-reduced-motion: reduce){
   .casa.casa-evento-destaque{animation:none}
 }
+
+
+/* Remove a camada decorativa atrás do tabuleiro */
+.centro-tabuleiro{display:none!important}
