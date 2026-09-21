@@ -267,12 +267,7 @@ function renderDado() {
       <div class="tabuleiro-vida-wrap">
         <div class="tabuleiro-vida tabuleiro-vida-grande" id="tabuleiroDado" aria-label="Grande tabuleiro de percurso com 48 casas">
           ${casaHTML}
-          <div class="centro-tabuleiro">
-            <span>🎲🏆🗺️</span>
-            <strong>GRANDE JORNADA</strong>
-            <small>Aprenda • avance • supere os eventos!</small>
-            <div class="centro-emojis">📚 🧠 ⭐ 🚀 🎯 🏆</div>
-          </div>
+          <div class="centro-tabuleiro" aria-hidden="true"></div>
         </div>
       </div>
       <div class="pecas-legenda">
