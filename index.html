@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Jogos educativos para professores aplicarem em sala de aula.">
+<title>BrincaAula — Jogos para Sala de Aula</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="paginaInicial" class="pagina pagina-inicial">
+  <div class="hero">
+    <div class="hero-emoji" aria-hidden="true">🎒</div>
+    <p class="etiqueta">FERRAMENTA PARA PROFESSORES</p>
+    <h1>BrincaAula</h1>
+    <h2>Jogos simples para aprender, participar e se divertir.</h2>
+    <p class="hero-texto">Encontre atividades para aplicar com sua turma. Escolha um jogo, confira as regras e conduza a brincadeira de forma simples e organizada.</p>
+    <button id="btnEscolherJogo" class="btn-principal" type="button">Escolher jogo <span aria-hidden="true">→</span></button>
+    <div class="hero-destaques">
+      <div><span aria-hidden="true">🎯</span><strong>Objetivos claros</strong><small>Atividades com propósito pedagógico</small></div>
+      <div><span aria-hidden="true">👩‍🏫</span><strong>Feito para professores</strong><small>Regras simples para conduzir a turma</small></div>
+      <div><span aria-hidden="true">📱</span><strong>Funciona no celular</strong><small>Consulte as regras durante a aula</small></div>
+    </div>
+  </div>
+</main>
+
+<main id="paginaJogos" class="pagina hidden">
+  <header class="cabecalho">
+    <button id="btnInicio" class="btn-link" type="button">← Início</button>
+    <div>
+      <p class="etiqueta">ESCOLHA UMA ATIVIDADE</p>
+      <h1>Jogos para sua turma</h1>
+      <p>Escolha uma atividade de acordo com a idade, duração e organização da turma.</p>
+    </div>
+  </header>
+
+  <section class="filtros" aria-label="Filtros dos jogos">
+    <div>
+      <label for="busca">Buscar jogo</label>
+      <input type="search" id="busca" placeholder="Ex.: Cara a Cara" autocomplete="off">
+    </div>
+    <div>
+      <label for="categoriaFiltro">Categoria</label>
+      <select id="categoriaFiltro">
+        <option value="">Todas as categorias</option>
+        <option>Raciocínio</option>
+        <option>Linguagem</option>
+        <option>Matemática</option>
+        <option>Memória</option>
+        <option>Movimento</option>
+      </select>
+    </div>
+    <div>
+      <label for="tempoFiltro">Duração</label>
+      <select id="tempoFiltro">
+        <option value="">Qualquer duração</option>
+        <option value="15">Até 15 minutos</option>
+        <option value="30">Até 30 minutos</option>
+        <option value="45">Até 45 minutos</option>
+      </select>
+    </div>
+  </section>
+
+  <p id="contadorJogos" class="contador" aria-live="polite"></p>
+  <section id="gamesGrid" class="grid" aria-label="Lista de jogos"></section>
+</main>
+
+<main id="paginaJogo" class="pagina pagina-jogo hidden">
+  <div class="barra-acoes">
+    <button id="btnVoltar" class="btn-secundario" type="button">← Voltar aos jogos</button>
+    <button id="btnImprimir" class="btn-imprimir" type="button">🖨 Imprimir regras</button>
+  </div>
+  <article id="gameContent"></article>
+</main>
+
+<script src="games.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
